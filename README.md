@@ -20,7 +20,7 @@ Mistakes make things progressively worse.
 
 ## Failure Progression
 
-The game supports up to **25 failures**.
+For the **initial MVP**, the game will support a 25-failure progression.
 
 Failures are grouped into sets of five.
 
@@ -34,7 +34,7 @@ Within each set:
 
 After every fifth failure, the background and overall atmosphere become scarier.
 
-There are five horror progression levels.
+The MVP will include five horror progression levels:
 
 ```text
 Failures 0-4   -> Horror Level 0
@@ -42,7 +42,7 @@ Failures 5-9   -> Horror Level 1
 Failures 10-14 -> Horror Level 2
 Failures 15-19 -> Horror Level 3
 Failures 20-24 -> Horror Level 4
-Failure 25     -> Horror Level 5 / Final State
+Failure 25     -> Horror Level 5 / MVP Final State
 ```
 
 The game state can be derived from the total number of failures:
@@ -51,6 +51,9 @@ The game state can be derived from the total number of failures:
 horror_level = floor(failures / 5)
 frazzled_level = failures % 5
 ```
+
+Future versions may extend the game beyond 25 failures with additional horror levels, character states, environments, mechanics, and progression.
+
 
 ## Sushi
 
