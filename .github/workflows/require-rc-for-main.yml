@@ -1,0 +1,20 @@
+name: Require rc for main
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  require-rc-source:
+    name: PR must target main from rc
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce source branch
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [ "$HEAD_REF" != "rc" ]; then
+            echo "::error::Merges into main are only allowed from rc (this PR is from \"$HEAD_REF\")."
+            exit 1
+          fi
+          echo "OK: PR is from rc."
