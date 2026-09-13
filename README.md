@@ -108,20 +108,43 @@ docs/ART_ASSETS.md
 
 ## Initial MVP
 
-The first playable version should stay very small.
+The first playable version was intentionally kept small.
 
-It should include:
+It includes:
 
 * One customer at a time
-* Three sushi recipes
+* Twenty sushi recipes
 * Ingredient selection
 * Submit button
 * Correct/incorrect validation
 * Failure counter
+* Successful customers served counter
 * Frazzled character states
 * Basic horror-level progression
 
-Once the basic loop works, the game can expand to all 20 sushi recipes and additional artwork, customers, sounds, animations, and horror effects.
+## Current Development — Version 1.1.0
+
+Development is now focused on version `1.1.0`.
+
+Version `1.1.0` will add:
+
+* A new start screen
+* Male and female sushi-chef avatar selection
+* Five frazzled states for each avatar
+* Easy and Hard game-mode selection
+* Familiar English sushi names in Easy mode
+* Japanese sushi terminology in Hard mode
+* Ten rotating customer characters, increased from the original five
+
+Difficulty changes only the sushi names displayed in customer orders. Recipe IDs, required ingredients, sushi artwork, and order validation remain the same in both modes.
+
+Example:
+
+```text
+Easy: Shrimp Nigiri
+Hard: Ebi Nigiri
+```
+
 
 ## Project Structure
 
@@ -139,4 +162,4 @@ sushi-game/
 
 ## Current Status
 
-Initial project setup and game design.
+Developing Version 1.1.0
