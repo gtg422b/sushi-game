@@ -2,6 +2,7 @@
   {
     "id": "california_roll",
     "name": "California Roll",
+    "hard_name": "California Maki",
     "ingredients": [
       "rice",
       "nori",
@@ -13,6 +14,7 @@
   {
     "id": "salmon_nigiri",
     "name": "Salmon Nigiri",
+    "hard_name": "Sake Nigiri",
     "ingredients": [
       "rice",
       "salmon"
@@ -21,6 +23,7 @@
   {
     "id": "tuna_nigiri",
     "name": "Tuna Nigiri",
+    "hard_name": "Maguro Nigiri",
     "ingredients": [
       "rice",
       "tuna"
@@ -29,6 +32,7 @@
   {
     "id": "shrimp_nigiri",
     "name": "Shrimp Nigiri",
+    "hard_name": "Ebi Nigiri",
     "ingredients": [
       "rice",
       "shrimp"
@@ -37,6 +41,7 @@
   {
     "id": "eel_nigiri",
     "name": "Eel Nigiri",
+    "hard_name": "Unagi Nigiri",
     "ingredients": [
       "rice",
       "eel"
@@ -45,6 +50,7 @@
   {
     "id": "spicy_tuna_roll",
     "name": "Spicy Tuna Roll",
+    "hard_name": "Spicy Maguro Maki",
     "ingredients": [
       "rice",
       "nori",
@@ -55,6 +61,7 @@
   {
     "id": "spicy_salmon_roll",
     "name": "Spicy Salmon Roll",
+    "hard_name": "Spicy Sake Maki",
     "ingredients": [
       "rice",
       "nori",
@@ -65,6 +72,7 @@
   {
     "id": "philadelphia_roll",
     "name": "Philadelphia Roll",
+    "hard_name": "Philadelphia Maki",
     "ingredients": [
       "rice",
       "nori",
@@ -76,6 +84,7 @@
   {
     "id": "cucumber_roll",
     "name": "Cucumber Roll",
+    "hard_name": "Kappa Maki",
     "ingredients": [
       "rice",
       "nori",
@@ -85,6 +94,7 @@
   {
     "id": "avocado_roll",
     "name": "Avocado Roll",
+    "hard_name": "Avocado Maki",
     "ingredients": [
       "rice",
       "nori",
@@ -94,6 +104,7 @@
   {
     "id": "salmon_avocado_roll",
     "name": "Salmon Avocado Roll",
+    "hard_name": "Sake Avocado Maki",
     "ingredients": [
       "rice",
       "nori",
@@ -104,6 +115,7 @@
   {
     "id": "tuna_avocado_roll",
     "name": "Tuna Avocado Roll",
+    "hard_name": "Maguro Avocado Maki",
     "ingredients": [
       "rice",
       "nori",
@@ -114,6 +126,7 @@
   {
     "id": "shrimp_tempura_roll",
     "name": "Shrimp Tempura Roll",
+    "hard_name": "Ebi Tempura Maki",
     "ingredients": [
       "rice",
       "nori",
@@ -124,6 +137,7 @@
   {
     "id": "dragon_roll",
     "name": "Dragon Roll",
+    "hard_name": "Dragon Maki",
     "ingredients": [
       "rice",
       "nori",
@@ -135,6 +149,7 @@
   {
     "id": "rainbow_roll",
     "name": "Rainbow Roll",
+    "hard_name": "Rainbow Maki",
     "ingredients": [
       "rice",
       "nori",
@@ -149,6 +164,7 @@
   {
     "id": "crab_roll",
     "name": "Crab Roll",
+    "hard_name": "Kani Maki",
     "ingredients": [
       "rice",
       "nori",
@@ -158,6 +174,7 @@
   {
     "id": "eel_avocado_roll",
     "name": "Eel Avocado Roll",
+    "hard_name": "Unagi Avocado Maki",
     "ingredients": [
       "rice",
       "nori",
@@ -168,6 +185,7 @@
   {
     "id": "salmon_cucumber_roll",
     "name": "Salmon Cucumber Roll",
+    "hard_name": "Sake Kyuri Maki",
     "ingredients": [
       "rice",
       "nori",
@@ -178,6 +196,7 @@
   {
     "id": "tuna_cucumber_roll",
     "name": "Tuna Cucumber Roll",
+    "hard_name": "Maguro Kyuri Maki",
     "ingredients": [
       "rice",
       "nori",
@@ -188,6 +207,7 @@
   {
     "id": "vegetable_roll",
     "name": "Vegetable Roll",
+    "hard_name": "Yasai Maki",
     "ingredients": [
       "rice",
       "nori",

@@ -1,5 +1,5 @@
 import type { ImageSourcePropType } from 'react-native';
-import type { CustomerId, IngredientId } from '../game/game';
+import type { AvatarId, CustomerId, IngredientId } from '../game/game';
 
 export const backgrounds = {
   0: require('../../assets/backgrounds/background_horror_0.png'),
@@ -11,12 +11,21 @@ export const backgrounds = {
 } satisfies Record<string, ImageSourcePropType>;
 
 export const playerAvatars = {
-  0: require('../../assets/player/player_frazzled_0.png'),
-  1: require('../../assets/player/player_frazzled_1.png'),
-  2: require('../../assets/player/player_frazzled_2.png'),
-  3: require('../../assets/player/player_frazzled_3.png'),
-  4: require('../../assets/player/player_frazzled_4.png'),
-} satisfies Record<string, ImageSourcePropType>;
+  female: {
+    0: require('../../assets/player/player_frazzled_0.png'),
+    1: require('../../assets/player/player_frazzled_1.png'),
+    2: require('../../assets/player/player_frazzled_2.png'),
+    3: require('../../assets/player/player_frazzled_3.png'),
+    4: require('../../assets/player/player_frazzled_4.png'),
+  },
+  male: {
+    0: require('../../assets/player/player_frazzled_m_0.png'),
+    1: require('../../assets/player/player_frazzled_m_1.png'),
+    2: require('../../assets/player/player_frazzled_m_2.png'),
+    3: require('../../assets/player/player_frazzled_m_3.png'),
+    4: require('../../assets/player/player_frazzled_m_4.png'),
+  },
+} satisfies Record<AvatarId, Record<0 | 1 | 2 | 3 | 4, ImageSourcePropType>>;
 
 export const customers = {
   customer_01: require('../../assets/customers/customer_01.png'),
@@ -24,6 +33,11 @@ export const customers = {
   customer_03: require('../../assets/customers/customer_03.png'),
   customer_04: require('../../assets/customers/customer_04.png'),
   customer_05: require('../../assets/customers/customer_05.png'),
+  customer_06: require('../../assets/customers/customer_06.png'),
+  customer_07: require('../../assets/customers/customer_07.png'),
+  customer_08: require('../../assets/customers/customer_08.png'),
+  customer_09: require('../../assets/customers/customer_09.png'),
+  customer_10: require('../../assets/customers/customer_10.png'),
 } satisfies Record<CustomerId, ImageSourcePropType>;
 
 export const sushiImages = {
