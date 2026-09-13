@@ -1,0 +1,198 @@
+[
+  {
+    "id": "california_roll",
+    "name": "California Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "crab",
+      "avocado",
+      "cucumber"
+    ]
+  },
+  {
+    "id": "salmon_nigiri",
+    "name": "Salmon Nigiri",
+    "ingredients": [
+      "rice",
+      "salmon"
+    ]
+  },
+  {
+    "id": "tuna_nigiri",
+    "name": "Tuna Nigiri",
+    "ingredients": [
+      "rice",
+      "tuna"
+    ]
+  },
+  {
+    "id": "shrimp_nigiri",
+    "name": "Shrimp Nigiri",
+    "ingredients": [
+      "rice",
+      "shrimp"
+    ]
+  },
+  {
+    "id": "eel_nigiri",
+    "name": "Eel Nigiri",
+    "ingredients": [
+      "rice",
+      "eel"
+    ]
+  },
+  {
+    "id": "spicy_tuna_roll",
+    "name": "Spicy Tuna Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "tuna",
+      "spicy_mayo"
+    ]
+  },
+  {
+    "id": "spicy_salmon_roll",
+    "name": "Spicy Salmon Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "salmon",
+      "spicy_mayo"
+    ]
+  },
+  {
+    "id": "philadelphia_roll",
+    "name": "Philadelphia Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "salmon",
+      "cream_cheese",
+      "cucumber"
+    ]
+  },
+  {
+    "id": "cucumber_roll",
+    "name": "Cucumber Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "cucumber"
+    ]
+  },
+  {
+    "id": "avocado_roll",
+    "name": "Avocado Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "avocado"
+    ]
+  },
+  {
+    "id": "salmon_avocado_roll",
+    "name": "Salmon Avocado Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "salmon",
+      "avocado"
+    ]
+  },
+  {
+    "id": "tuna_avocado_roll",
+    "name": "Tuna Avocado Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "tuna",
+      "avocado"
+    ]
+  },
+  {
+    "id": "shrimp_tempura_roll",
+    "name": "Shrimp Tempura Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "tempura_shrimp",
+      "avocado"
+    ]
+  },
+  {
+    "id": "dragon_roll",
+    "name": "Dragon Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "tempura_shrimp",
+      "avocado",
+      "eel"
+    ]
+  },
+  {
+    "id": "rainbow_roll",
+    "name": "Rainbow Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "crab",
+      "avocado",
+      "cucumber",
+      "salmon",
+      "tuna",
+      "shrimp"
+    ]
+  },
+  {
+    "id": "crab_roll",
+    "name": "Crab Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "crab"
+    ]
+  },
+  {
+    "id": "eel_avocado_roll",
+    "name": "Eel Avocado Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "eel",
+      "avocado"
+    ]
+  },
+  {
+    "id": "salmon_cucumber_roll",
+    "name": "Salmon Cucumber Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "salmon",
+      "cucumber"
+    ]
+  },
+  {
+    "id": "tuna_cucumber_roll",
+    "name": "Tuna Cucumber Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "tuna",
+      "cucumber"
+    ]
+  },
+  {
+    "id": "vegetable_roll",
+    "name": "Vegetable Roll",
+    "ingredients": [
+      "rice",
+      "nori",
+      "avocado",
+      "cucumber"
+    ]
+  }
+]
