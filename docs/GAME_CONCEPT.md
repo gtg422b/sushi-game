@@ -13,25 +13,100 @@ Incorrect orders increase the failure count and progressively make the player av
 The initial MVP will include a progression through 25 failures. Future versions may extend beyond this.
 
 ---
+## Version 1.1.0 Game Setup
+
+Version `1.1.0` adds a start screen that appears before gameplay begins.
+
+The player must select:
+
+* A sushi-chef avatar
+* A game mode
+
+### Avatar Selection
+
+The available avatar choices are:
+
+```text
+female
+male
+```
+
+The female avatar is the default selection.
+
+The selected avatar remains active for the entire game session and determines which set of frazzled player images is used.
+
+```text
+Female -> player_frazzled_<frazzled_level>.png
+Male   -> player_frazzled_m_<frazzled_level>.png
+```
+---
+
+### Game-Mode Selection
+
+The available game modes are:
+
+```text
+easy
+hard
+```
+
+The selected game mode determines which sushi name is displayed in customer orders.
+
+```text
+Easy -> name
+Hard -> hard_name
+```
+
+Easy mode uses the recipe's existing `name` field and displays familiar English sushi names.
+
+Hard mode uses the recipe's `hard_name` field and displays Japanese sushi terminology written in Roman characters.
+
+Example:
+
+```text
+Easy -> Shrimp Nigiri
+Hard -> Ebi Nigiri
+```
+
+Game mode changes only the displayed order name. It does not change:
+
+* Recipe IDs
+* Required ingredients
+* Sushi images
+* Recipe validation
+* Failure progression
+* Horror progression
+
+The existing `name` field is retained so the original game continues working before the mode-selection code is implemented.
+
+The selected avatar and game mode remain fixed until the player starts a new game.
+
+---
 
 ## Core Game Loop
 
-1. A customer appears.
-2. The customer places a random sushi order.
-3. The player selects ingredients.
-4. The player submits the order.
-5. The game compares the selected ingredients to the requested recipe.
-6. If correct:
+1. The start screen appears.
+2. The player selects a female or male sushi-chef avatar.
+3. The player selects Easy or Hard mode.
+4. The player starts the game.
+5. A customer appears.
+6. The customer places a random sushi order.
+7. The order name is displayed using the selected game mode.
+8. The player selects ingredients.
+9. The player submits the order.
+10. The game compares the selected ingredients to the requested recipe.
+11. If correct:
 
-   * The order is completed.
-   * The successful customers served count increases by one.
-   * A new customer/order is generated.
-7. If incorrect:
+    * The order is completed.
+    * The successful customers served count increases by one.
+    * A new customer and order are generated.
+12. If incorrect:
 
-   * The failure count increases.
-   * The player's frazzled state and/or horror level changes.
-   * The corresponding player avatar and/or background image is updated.
-   * A new order begins.
+    * The failure count increases.
+    * The player's frazzled state and/or horror level changes.
+    * The corresponding player-avatar and/or background image is updated.
+    * A new customer and order are generated.
+13. The game continues until the player starts a new game or reaches the current final state.
 
 ---
 
@@ -39,11 +114,34 @@ The initial MVP will include a progression through 25 failures. Future versions 
 
 Customers order one sushi item at a time.
 
-Orders are selected randomly from the sushi recipes currently available in the game.
+Orders are selected randomly from the 20 sushi recipes available in the game.
 
-The MVP may begin with only a few recipes during development.
+Each recipe contains:
 
-The target initial recipe set is approximately 20 sushi types.
+```text
+id
+name
+hard_name
+ingredients
+```
+
+The selected game mode determines which recipe name is displayed:
+
+```text
+easy -> name
+hard -> hard_name
+```
+
+The underlying recipe ID and required ingredients remain the same in both modes.
+
+Example:
+
+```text
+Recipe ID: shrimp_nigiri
+Easy name: Shrimp Nigiri
+Hard name: Ebi Nigiri
+Ingredients: rice, shrimp
+```
 
 Recipe details are defined in:
 
@@ -56,6 +154,37 @@ Recipe data is stored in:
 ```text
 data/sushi.json
 ```
+
+---
+
+## Customer Selection
+
+Version `1.1.0` includes ten customer characters:
+
+```text
+customer_01.png
+customer_02.png
+customer_03.png
+customer_04.png
+customer_05.png
+customer_06.png
+customer_07.png
+customer_08.png
+customer_09.png
+customer_10.png
+```
+
+A customer is randomly selected whenever a new order begins.
+
+When practical, the newly selected customer should not be the same as the previous customer.
+
+Customer selection is visual only. A customer's appearance does not affect:
+
+* The requested recipe
+* Required ingredients
+* Recipe validation
+* Game mode
+* Failure progression
 
 ---
 
@@ -160,9 +289,43 @@ These values control the two primary visual elements of the game.
 
 ### Player Avatar
 
-The player avatar image is determined by `frazzled_level`.
+The player avatar is determined by:
 
-As the player makes mistakes within the current horror level, the avatar becomes progressively more frazzled.
+```text
+selected_avatar
+frazzled_level
+```
+
+The player selects the female or male avatar on the start screen.
+
+The female avatar uses the original default filenames:
+
+```text
+player_frazzled_0.png
+player_frazzled_1.png
+player_frazzled_2.png
+player_frazzled_3.png
+player_frazzled_4.png
+```
+
+The male avatar uses:
+
+```text
+player_frazzled_m_0.png
+player_frazzled_m_1.png
+player_frazzled_m_2.png
+player_frazzled_m_3.png
+player_frazzled_m_4.png
+```
+
+The filename is selected using:
+
+```text
+Female -> player_frazzled_<frazzled_level>.png
+Male   -> player_frazzled_m_<frazzled_level>.png
+```
+
+The frazzled progression is:
 
 ```text
 frazzled_level 0 -> Normal player avatar
@@ -174,7 +337,9 @@ frazzled_level 4 -> Frazzled avatar 4
 
 The avatar should visually communicate increasing stress, exhaustion, panic, or disorganization.
 
-When the fifth failure occurs and the game advances to the next horror level, `frazzled_level` returns to 0 and the player avatar returns to its normal frazzled state for the new horror level.
+When the fifth failure occurs, the game advances to the next horror level. `frazzled_level` returns to `0`, and the selected avatar returns to its normal state.
+
+The selected avatar does not change when the frazzled level resets.
 
 ### Background
 
@@ -216,14 +381,52 @@ At minimum, the game should track:
 
 ```text
 current_order
+current_customer
+previous_customer
 selected_ingredients
+selected_avatar
+game_mode
 failures
 horror_level
 frazzled_level
 successful_customers_served
+game_started
 ```
 
-Additional state can be added as the game develops.
+### Setup State
+
+```text
+selected_avatar = female | male
+game_mode = easy | hard
+game_started = true | false
+```
+
+The female avatar should be the default avatar selection.
+
+Easy mode should be the default game-mode selection.
+
+### Customer State
+
+```text
+current_customer
+previous_customer
+```
+
+`previous_customer` may be used to prevent the same customer from being selected twice in succession.
+
+### Session Reset
+
+Starting a new game should:
+
+* Return the player to the start screen
+* Clear the current order
+* Clear selected ingredients
+* Reset failures to `0`
+* Reset `horror_level` to `0`
+* Reset `frazzled_level` to `0`
+* Reset successful customers served to `0`
+* Allow the player to choose a new avatar
+* Allow the player to choose a new game mode
 
 ---
 
@@ -243,6 +446,32 @@ The first playable MVP should include:
 * A small set of working sushi recipes
 
 The goal of the MVP is to prove the core game loop before adding more content.
+
+---
+
+## Version 1.1.0 Scope
+
+Version `1.1.0` adds:
+
+* A start screen
+* Female and male sushi-chef selection
+* Five frazzled states for each avatar
+* Easy and Hard game modes
+* English sushi names in Easy mode
+* Japanese sushi terminology in Hard mode
+* Ten rotating customer characters
+* Protection against immediately repeating the same customer
+* A New Game or Back to Start option
+
+Version `1.1.0` does not change:
+
+* The number of available recipes
+* Recipe ingredients
+* Recipe validation
+* Failure calculations
+* Frazzled-level calculations
+* Horror-level calculations
+* Background progression
 
 ---
 

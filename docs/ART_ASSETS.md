@@ -411,18 +411,21 @@ assets/
 
 ---
 
-## MVP Art Requirements
+## Version 1.1.0 Art Requirements
 
-The MVP requires:
+Version `1.1.0` requires:
 
-* 5 player avatar states
-* 6 background states
-* 5 customer sprites
+* 10 player-avatar images: 5 female and 5 male
+* 6 background images
+* 10 customer sprites
 * 20 sushi images
 * 12 ingredient images
 
-Placeholder art may be used during early development, but filenames and IDs should remain consistent with this document.
+All player-avatar, customer, sushi, and ingredient images should use transparent PNG backgrounds.
 
+Background images should not use transparency.
+
+Placeholder art may be used during development, but filenames and IDs should remain consistent with this document.
 ---
 
 ## Asset Consistency Rules
@@ -431,9 +434,17 @@ To keep artwork, game data, and code aligned:
 
 * Sushi filenames must match sushi recipe IDs.
 * Ingredient filenames must match ingredient IDs using the `ingredient_` prefix.
-* Player avatar filenames must correspond to `frazzled_level`.
+* The selected player image must correspond to both `selected_avatar` and `frazzled_level`.
+* Female player-avatar filenames must use the original `player_frazzled_` prefix.
+* Male player-avatar filenames must use the `player_frazzled_m_` prefix.
+* The female avatar is the default player avatar.
 * Background filenames must correspond to `horror_level`.
-* Existing IDs should not be renamed without also updating the game data and any code references.
+* Customer filenames must use two-digit numbering from `customer_01.png` through `customer_10.png`.
+* Player-avatar images must use transparent backgrounds.
+* Customer images must use transparent backgrounds.
+* Sushi images must use transparent backgrounds.
+* Ingredient images must use transparent backgrounds.
+* Existing IDs and filenames should not be renamed without also updating the game data and code references.
 
 ---
 

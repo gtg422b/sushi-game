@@ -36,17 +36,19 @@ docs/ART_ASSETS.md
 
 Each recipe has one stable recipe ID and one ingredient set. Difficulty changes only the name shown in the customer's order; it does not change the recipe or its validation.
 
-* **Easy mode** uses familiar English ingredient and roll names.
-* **Hard mode** uses Japanese sushi terms written in Roman characters.
+* **Easy mode** uses the existing `name` field and displays familiar English sushi names.
+* **Hard mode** uses the `hard_name` field and displays Japanese sushi terms written in Roman characters.
 
 The selected game mode determines which display name is shown:
 
 ```text
-EASY -> easy_name
+EASY -> name
 HARD -> hard_name
 ```
 
 Recipe IDs, sushi image filenames, ingredients, and validation rules remain identical in both modes.
+
+The existing `name` field is retained so the original game continues working before the Easy and Hard mode-selection code is implemented.
 
 ---
 
@@ -799,7 +801,7 @@ A recipe should contain at minimum:
 
 ```text
 id
-easy_name
+name
 hard_name
 ingredients
 ```
@@ -809,7 +811,7 @@ Example structure:
 ```json
 {
   "id": "salmon_nigiri",
-  "easy_name": "Salmon Nigiri",
+  "name": "Salmon Nigiri",
   "hard_name": "Sake Nigiri",
   "ingredients": [
     "rice",
@@ -820,16 +822,17 @@ Example structure:
 
 ---
 
-# MVP Rules
+# Version 1.1.0 Recipe Rules
 
-For the initial MVP:
+For version `1.1.0`:
 
 * There are 20 available sushi recipes.
 * Customers request one sushi item at a time.
 * Customer orders are selected randomly from the available recipes.
-* Easy mode displays each recipe's `easy_name`.
+* Easy mode displays each recipe's `name`.
 * Hard mode displays each recipe's `hard_name`.
 * Difficulty does not change recipe IDs, ingredients, images, or validation.
+* The existing `name` field is retained for compatibility with the original game.
 * The player selects ingredients from the ingredient list.
 * The player submits the completed order.
 * Correct orders increase `successful_customers_served`.
