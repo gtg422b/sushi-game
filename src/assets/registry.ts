@@ -1,5 +1,5 @@
 import type { ImageSourcePropType } from 'react-native';
-import type { IngredientId } from '../game/game';
+import type { CustomerId, IngredientId } from '../game/game';
 
 export const backgrounds = {
   0: require('../../assets/backgrounds/background_horror_0.png'),
@@ -24,7 +24,7 @@ export const customers = {
   customer_03: require('../../assets/customers/customer_03.png'),
   customer_04: require('../../assets/customers/customer_04.png'),
   customer_05: require('../../assets/customers/customer_05.png'),
-} satisfies Record<string, ImageSourcePropType>;
+} satisfies Record<CustomerId, ImageSourcePropType>;
 
 export const sushiImages = {
   avocado_roll: require('../../assets/sushi/avocado_roll.png'),

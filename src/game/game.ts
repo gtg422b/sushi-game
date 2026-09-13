@@ -3,10 +3,23 @@ export const ingredientIds = [
   'avocado', 'cucumber', 'cream_cheese', 'spicy_mayo', 'tempura_shrimp',
 ] as const;
 
+export const customerIds = ['customer_01', 'customer_02', 'customer_03', 'customer_04', 'customer_05'] as const;
+export type CustomerId = typeof customerIds[number];
+export type CustomerReaction = { customer_id: CustomerId; correct: boolean };
+
+export function randomCustomer(previous?: CustomerId, random = Math.random, available: readonly CustomerId[] = customerIds): CustomerId {
+  if (!available.length) throw new Error('At least one customer is required.');
+  const alternatives = available.filter(id => id !== previous);
+  const pool = alternatives.length ? alternatives : available;
+  return pool[Math.floor(random() * pool.length)];
+}
+
 export type IngredientId = typeof ingredientIds[number];
 export type Recipe = { id: string; name: string; ingredients: IngredientId[] };
 export type GameState = {
   order: Recipe;
+  customer_id: CustomerId;
+  reaction: CustomerReaction | null;
   selected: IngredientId[];
   feedback: string | null;
   successful_customers_served: number;
@@ -24,15 +37,32 @@ export function progression(failures: number) {
   };
 }
 
-export function createGameState(order: Recipe): GameState {
-  return { order, selected: [], feedback: null, successful_customers_served: 0,
+export function createGameState(order: Recipe, customer_id: CustomerId): GameState {
+  return { order, customer_id, reaction: null, selected: [], feedback: null, successful_customers_served: 0,
     failures: 0, ...progression(0) };
 }
 export type GameAction =
   | { type: 'toggle'; ingredient: IngredientId }
   | { type: 'clear' }
-  | { type: 'restart'; nextOrder: Recipe }
-  | { type: 'submit'; nextOrder: Recipe };
+  | { type: 'restart'; nextOrder: Recipe; nextCustomer: CustomerId }
+  | { type: 'submit' }
+  | { type: 'finishReaction'; reaction: CustomerReaction; nextOrder?: Recipe; nextCustomer?: CustomerId };
+
+// Generate the next visit only after a reaction, and never after game over.
+export function finishReactionAction(state: GameState, recipes: readonly Recipe[], random = Math.random): GameAction | null {
+  if (!state.reaction) return null;
+  if (state.game_over) return { type: 'finishReaction', reaction: state.reaction };
+  return { type: 'finishReaction', reaction: state.reaction,
+    nextOrder: randomOrder(recipes, random), nextCustomer: randomCustomer(state.customer_id, random) };
+}
+
+export function restartAction(state: GameState, recipes: readonly Recipe[], random = Math.random): GameAction {
+  return { type: 'restart', nextOrder: randomOrder(recipes, random), nextCustomer: randomCustomer(state.customer_id, random) };
+}
+
+export function avatarLevel(state: GameState): number {
+  return state.game_over ? 4 : state.frazzled_level;
+}
 
 export function randomOrder(recipes: readonly Recipe[], random = Math.random): Recipe {
   if (!recipes.length) throw new Error('At least one recipe is required.');
@@ -45,8 +75,15 @@ export function matchesRecipe(selected: readonly IngredientId[], recipe: Recipe)
 }
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
-  if (action.type === 'restart') return createGameState(action.nextOrder);
-  if (state.game_over) return state;
+  if (action.type === 'restart') return createGameState(action.nextOrder, action.nextCustomer);
+  if (action.type === 'finishReaction') {
+    // An expired callback from an older reaction/session must not change this one.
+    if (!state.reaction || action.reaction !== state.reaction) return state;
+    if (state.game_over) return { ...state, reaction: null };
+    if (!action.nextOrder || !action.nextCustomer) return state;
+    return { ...state, reaction: null, order: action.nextOrder, customer_id: action.nextCustomer };
+  }
+  if (state.game_over || state.reaction) return state;
 
   switch (action.type) {
     case 'toggle':
@@ -61,7 +98,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return {
         ...state, ...visualState, failures,
         successful_customers_served: state.successful_customers_served + (correct ? 1 : 0),
-        order: action.nextOrder, selected: [],
+        reaction: { customer_id: state.customer_id, correct }, selected: [],
         feedback: visualState.game_over ? 'The restaurant has reached its final horror state.'
           : correct ? `${state.order.name}: nicely done! New order ready.`
           : `${state.order.name}: ingredients didn't match. Try the next order!`,
