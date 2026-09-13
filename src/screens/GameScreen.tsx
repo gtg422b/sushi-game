@@ -1,20 +1,38 @@
-import { useReducer } from 'react';
-import { Image, ImageBackground, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useReducer, useRef } from 'react';
+import { Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { backgrounds, customers, ingredientImages, playerAvatars, sushiImages } from '../assets/registry';
-import { createGameState, gameReducer, ingredientIds, randomOrder } from '../game/game';
+import { avatarLevel, createGameState, finishReactionAction, gameReducer, ingredientIds, randomCustomer, randomOrder, restartAction } from '../game/game';
 import { recipes } from '../game/recipes';
 
 export function GameScreen() {
-  const [state, dispatch] = useReducer(gameReducer, undefined, () => createGameState(randomOrder(recipes)));
+  const [state, dispatch] = useReducer(gameReducer, undefined, () => createGameState(randomOrder(recipes), randomCustomer()));
+  const scrollView = useRef<ScrollView>(null);
+
+  const inputDisabled = state.game_over || state.reaction !== null;
+  const showGameOver = state.game_over && state.reaction === null;
+  const activeBackground = backgrounds[state.horror_level as keyof typeof backgrounds];
+
+  useEffect(() => {
+    if (!state.reaction) return;
+    // Submit can be below the fold on phones; bring the reacting customer into view.
+    scrollView.current?.scrollTo({ y: 0, animated: false });
+    const timeout = setTimeout(() => {
+      const action = finishReactionAction(state, recipes);
+      if (action) dispatch(action);
+    }, 1800);
+    return () => clearTimeout(timeout);
+  }, [state]);
 
   return (
-    <ImageBackground source={backgrounds[state.horror_level as keyof typeof backgrounds]} style={styles.background} resizeMode="cover">
+    <View style={styles.background}>
+      {/* A level change replaces only the native image, including level 5 → 0 on restart. */}
+      <Image key={state.horror_level} source={activeBackground} style={styles.backgroundImage} resizeMode="cover" />
       <StatusBar barStyle="light-content" />
       <SafeAreaView style={styles.safe}>
-        <ScrollView contentContainerStyle={styles.content}
-          accessibilityElementsHidden={state.game_over}
-          importantForAccessibility={state.game_over ? 'no-hide-descendants' : 'auto'}>
+        <ScrollView ref={scrollView} contentContainerStyle={styles.content}
+          accessibilityElementsHidden={showGameOver}
+          importantForAccessibility={showGameOver ? 'no-hide-descendants' : 'auto'}>
           <View style={styles.heading}>
             <Text style={styles.eyebrow}>WELCOME TO YOUR SHIFT</Text>
             <Text style={styles.title}>Sushi after hours</Text>
@@ -25,12 +43,20 @@ export function GameScreen() {
           </View>
           <View style={styles.scene}>
             <View style={styles.portrait}>
-              <Image source={playerAvatars[state.frazzled_level as keyof typeof playerAvatars]} style={styles.character} resizeMode="contain" accessibilityLabel="Your sushi chef" />
+              <Image source={playerAvatars[avatarLevel(state) as keyof typeof playerAvatars]} style={styles.character} resizeMode="contain" accessibilityLabel="Your sushi chef" />
               <Text style={styles.caption}>Chef</Text>
             </View>
             <View style={styles.portrait}>
-              <Image source={customers.customer_01} style={styles.character} resizeMode="contain" accessibilityLabel="Current customer" />
+              <Image source={customers[state.customer_id]} style={styles.character} resizeMode="contain" accessibilityLabel="Current customer" />
               <Text style={styles.caption}>Your customer</Text>
+              {state.reaction && (
+                <View style={styles.reaction} pointerEvents="none">
+                  <Text accessibilityLiveRegion="assertive" style={[styles.reactionText,
+                    { color: state.reaction.correct ? '#39ff14' : '#ff3030' }]}>
+                    {state.reaction.correct ? 'THANK YOU!' : 'THIS IS NOT WHAT I ORDERED!'}
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
           <View style={styles.panel}>
@@ -49,7 +75,7 @@ export function GameScreen() {
                 const label = id.replace(/_/g, ' ');
                 return (
                   <Pressable key={id} accessibilityRole="button" accessibilityLabel={label}
-                    accessibilityState={{ selected, disabled: state.game_over }} disabled={state.game_over}
+                    accessibilityState={{ selected, disabled: inputDisabled }} disabled={inputDisabled}
                     onPress={() => dispatch({ type: 'toggle', ingredient: id })}
                     style={({ pressed }) => [styles.ingredient, selected && styles.selected, pressed && styles.pressed]}>
                     {source ? <Image source={source} style={styles.icon} resizeMode="contain" />
@@ -62,26 +88,26 @@ export function GameScreen() {
             <Text style={styles.selection}>{state.selected.length} ingredients selected</Text>
             {state.feedback && <Text accessibilityLiveRegion="polite" style={styles.feedback}>{state.feedback}</Text>}
             <View style={styles.actions}>
-              <Pressable accessibilityRole="button" disabled={state.game_over} onPress={() => dispatch({ type: 'clear' })}
+              <Pressable accessibilityRole="button" disabled={inputDisabled} onPress={() => dispatch({ type: 'clear' })}
                 style={({ pressed }) => [styles.clear, pressed && styles.pressed]}>
                 <Text style={styles.clearText}>Clear</Text>
               </Pressable>
-              <Pressable accessibilityRole="button" accessibilityState={{ disabled: state.game_over || state.selected.length === 0 }}
-                disabled={state.game_over || state.selected.length === 0}
-                onPress={() => dispatch({ type: 'submit', nextOrder: randomOrder(recipes) })}
-                style={({ pressed }) => [styles.submit, (state.game_over || !state.selected.length) && styles.disabled, pressed && styles.pressed]}>
+              <Pressable accessibilityRole="button" accessibilityState={{ disabled: inputDisabled || state.selected.length === 0 }}
+                disabled={inputDisabled || state.selected.length === 0}
+                onPress={() => dispatch({ type: 'submit' })}
+                style={({ pressed }) => [styles.submit, (inputDisabled || !state.selected.length) && styles.disabled, pressed && styles.pressed]}>
                 <Text style={styles.submitText}>Submit Order</Text>
               </Pressable>
             </View>
           </View>
         </ScrollView>
-        {state.game_over && (
+        {showGameOver && (
           <View style={styles.overlay} accessibilityViewIsModal>
             <View style={styles.gameOverCard}>
               <Text accessibilityRole="header" style={styles.title}>GAME OVER</Text>
               <Text style={styles.gameOverText}>25 failures · {state.successful_customers_served} customers served</Text>
               <Pressable accessibilityRole="button"
-                onPress={() => dispatch({ type: 'restart', nextOrder: randomOrder(recipes) })}
+                onPress={() => dispatch(restartAction(state, recipes))}
                 style={({ pressed }) => [styles.restart, pressed && styles.pressed]}>
                 <Text style={styles.submitText}>Restart</Text>
               </Pressable>
@@ -89,11 +115,14 @@ export function GameScreen() {
           </View>
         )}
       </SafeAreaView>
-    </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: { position: 'absolute', width: '100%', height: '100%' },
+  reaction: { position: 'absolute', top: 8, left: -12, right: -12, backgroundColor: 'rgba(20, 14, 18, 0.92)', borderRadius: 12, padding: 10 },
+  reactionText: { fontSize: 22, fontWeight: '900', textAlign: 'center' },
   background: { flex: 1, backgroundColor: '#241c20' },
   safe: { flex: 1, backgroundColor: 'rgba(20, 14, 18, 0.3)' },
   content: { width: '100%', maxWidth: 520, alignSelf: 'center', padding: 16, paddingBottom: 28 },
