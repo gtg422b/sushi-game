@@ -3,7 +3,8 @@ export const ingredientIds = [
   'avocado', 'cucumber', 'cream_cheese', 'spicy_mayo', 'tempura_shrimp',
 ] as const;
 
-export const customerIds = ['customer_01', 'customer_02', 'customer_03', 'customer_04', 'customer_05'] as const;
+export const customerIds = ['customer_01', 'customer_02', 'customer_03', 'customer_04', 'customer_05',
+  'customer_06', 'customer_07', 'customer_08', 'customer_09', 'customer_10'] as const;
 export type CustomerId = typeof customerIds[number];
 export type CustomerReaction = { customer_id: CustomerId; correct: boolean };
 
@@ -15,8 +16,11 @@ export function randomCustomer(previous?: CustomerId, random = Math.random, avai
 }
 
 export type IngredientId = typeof ingredientIds[number];
-export type Recipe = { id: string; name: string; ingredients: IngredientId[] };
-export type GameState = {
+export type AvatarId = 'female' | 'male';
+export type GameMode = 'easy' | 'hard';
+export type SessionOptions = { selected_avatar: AvatarId; game_mode: GameMode };
+export type Recipe = { id: string; name: string; hard_name: string; ingredients: IngredientId[] };
+export type GameState = SessionOptions & {
   order: Recipe;
   customer_id: CustomerId;
   reaction: CustomerReaction | null;
@@ -37,8 +41,13 @@ export function progression(failures: number) {
   };
 }
 
-export function createGameState(order: Recipe, customer_id: CustomerId): GameState {
-  return { order, customer_id, reaction: null, selected: [], feedback: null, successful_customers_served: 0,
+export function recipeDisplayName(recipe: Recipe, gameMode: GameMode): string {
+  return gameMode === 'hard' ? recipe.hard_name : recipe.name;
+}
+
+export function createGameState(order: Recipe, customer_id: CustomerId,
+  options: SessionOptions = { selected_avatar: 'female', game_mode: 'easy' }): GameState {
+  return { selected_avatar: options.selected_avatar, game_mode: options.game_mode, order, customer_id, reaction: null, selected: [], feedback: null, successful_customers_served: 0,
     failures: 0, ...progression(0) };
 }
 export type GameAction =
@@ -75,7 +84,7 @@ export function matchesRecipe(selected: readonly IngredientId[], recipe: Recipe)
 }
 
 export function gameReducer(state: GameState, action: GameAction): GameState {
-  if (action.type === 'restart') return createGameState(action.nextOrder, action.nextCustomer);
+  if (action.type === 'restart') return createGameState(action.nextOrder, action.nextCustomer, state);
   if (action.type === 'finishReaction') {
     // An expired callback from an older reaction/session must not change this one.
     if (!state.reaction || action.reaction !== state.reaction) return state;
@@ -100,8 +109,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         successful_customers_served: state.successful_customers_served + (correct ? 1 : 0),
         reaction: { customer_id: state.customer_id, correct }, selected: [],
         feedback: visualState.game_over ? 'The restaurant has reached its final horror state.'
-          : correct ? `${state.order.name}: nicely done! New order ready.`
-          : `${state.order.name}: ingredients didn't match. Try the next order!`,
+          : correct ? `${recipeDisplayName(state.order, state.game_mode)}: nicely done! New order ready.`
+          : `${recipeDisplayName(state.order, state.game_mode)}: ingredients didn't match. Try the next order!`,
       };
     }
   }

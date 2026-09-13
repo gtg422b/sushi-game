@@ -8,6 +8,97 @@ Correct orders keep the restaurant running smoothly.
 
 Mistakes make things progressively worse.
 
+## Running the Game
+
+From the project directory, install dependencies:
+
+```bash
+npm install
+```
+
+Start the Expo development server:
+
+```bash
+npm start
+```
+
+The Expo terminal will display a QR code and platform options.
+
+To open the game on a physical iPhone or Android device:
+
+1. Install and open Expo Go.
+2. Sign into the same Expo account used by the Expo CLI.
+3. Make sure the phone can reach the development computer.
+4. Scan the displayed QR code.
+
+Platform-specific commands:
+
+```bash
+npm run web
+npm run ios
+npm run android
+```
+
+The iOS command requires macOS and the appropriate Xcode simulator setup.
+
+The Android command requires an Android emulator or connected device.
+
+Development verification commands:
+
+```bash
+npm run typecheck
+npm test
+npx expo export --platform all
+```
+
+If Expo has stale cached content, restart it with:
+
+```bash
+npx expo start --go --clear
+```
+
+If the default port is occupied:
+
+```bash
+npm start -- --port 8082
+```
+
+## Agent Instructions
+
+### Markdown File Protection
+
+Treat every existing Markdown (`.md`) file in this repository as read-only during implementation work.
+
+Agents may:
+
+* Read existing Markdown files for requirements and context.
+* Create one new Markdown handoff file after implementation and verification are complete.
+* Use the next unused sequential filename following the `README-SKY<number>.md` convention.
+
+Agents must not:
+
+* Edit or overwrite an existing Markdown file.
+* Append content to an existing Markdown file.
+* Rename or delete an existing Markdown file.
+* Reformat an existing Markdown file.
+* Modify `README.md`.
+* Modify anything under `docs/`.
+* Modify an existing `README-SKY<number>.md` file.
+
+If an agent finds a documentation inconsistency, it must report the inconsistency in the newly created handoff document and in its final response. It must not correct the existing Markdown file.
+
+Before completing an implementation task, run:
+
+```bash
+git diff --name-only
+```
+
+Verify that no previously existing Markdown file was changed.
+
+Only one new sequential `README-SKY<number>.md` implementation handoff may be created per implementation task. Existing handoff files must never be overwritten.
+
+
+
 ## Core Game Loop
 
 1. The player selects a female or male sushi-chef avatar.

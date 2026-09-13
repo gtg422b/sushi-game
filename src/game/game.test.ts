@@ -6,8 +6,8 @@ import {
   type GameState, type Recipe,
 } from './game.ts';
 
-const salmon: Recipe = { id: 'salmon_nigiri', name: 'Salmon Nigiri', ingredients: ['rice', 'salmon'] };
-const tuna: Recipe = { id: 'tuna_nigiri', name: 'Tuna Nigiri', ingredients: ['rice', 'tuna'] };
+const salmon: Recipe = { id: 'salmon_nigiri', name: 'Salmon Nigiri', hard_name: 'Sake Nigiri', ingredients: ['rice', 'salmon'] };
+const tuna: Recipe = { id: 'tuna_nigiri', name: 'Tuna Nigiri', hard_name: 'Maguro Nigiri', ingredients: ['rice', 'tuna'] };
 const initial = () => createGameState(salmon, randomCustomer(undefined, () => 0));
 function finish(state: GameState) {
   const action = finishReactionAction(state, [tuna], () => 0);
@@ -35,7 +35,8 @@ test('random order selection reaches both ends and rejects an empty catalog', ()
   assert.throws(() => randomOrder([]));
 });
 
-test('initial random customer is stored and all five customers are selectable', () => {
+test('initial random customer is stored and all ten customers are selectable', () => {
+  assert.equal(customerIds.length, 10);
   for (let i = 0; i < customerIds.length; i++) {
     const customer = randomCustomer(undefined, () => (i + 0.5) / customerIds.length);
     assert.equal(customer, customerIds[i]);
@@ -47,9 +48,22 @@ test('initial random customer is stored and all five customers are selectable', 
 test('rotation excludes the current customer when possible and supports a single customer', () => {
   for (const previous of customerIds) {
     for (const value of [0, 0.25, 0.5, 0.999]) assert.notEqual(randomCustomer(previous, () => value), previous);
+    const alternatives = customerIds.filter(id => id !== previous);
+    for (let index = 0; index < alternatives.length; index++) {
+      assert.equal(randomCustomer(previous, () => (index + 0.5) / alternatives.length), alternatives[index]);
+    }
   }
   assert.equal(randomCustomer('customer_01', () => 0, ['customer_01']), 'customer_01');
   assert.throws(() => randomCustomer(undefined, Math.random, []));
+});
+
+test('consecutive recipes may repeat while customers rotate and reactions remain distinct', () => {
+  const first = gameReducer(initial(), { type: 'submit' });
+  const next = gameReducer(first, finishReactionAction(first, [salmon], () => 0)!);
+  assert.equal(next.order, first.order);
+  assert.notEqual(next.customer_id, first.customer_id);
+  const second = gameReducer(next, { type: 'submit' });
+  assert.notEqual(second.reaction, first.reaction);
 });
 
 test('selection toggles and clear resets it', () => {
@@ -128,6 +142,7 @@ test('restart resets horror to zero, normal avatar, counters, order, customer, r
   for (const before of [lost, finish(lost), { ...lost, selected: ['rice'] as GameState['selected'], successful_customers_served: 3 }]) {
     const state = gameReducer(before, restartAction(before, [salmon], () => 0));
     assert.deepEqual(state, {
+      selected_avatar: 'female', game_mode: 'easy',
       order: salmon, customer_id: randomCustomer(before.customer_id, () => 0),
       reaction: null, selected: [], feedback: null, failures: 0,
       successful_customers_served: 0, frazzled_level: 0, horror_level: 0, game_over: false,
