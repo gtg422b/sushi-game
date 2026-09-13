@@ -19,13 +19,18 @@ Asset filenames should use consistent IDs so the artwork can be mapped directly 
 
 ## Player Avatar Assets
 
+Version `1.1.0` allows the player to select a female or male sushi-chef avatar from the start screen.
+
+The selected avatar remains active for the entire game session.
+
 The player avatar image is controlled by:
 
 ```text
+selected_avatar
 frazzled_level
 ```
 
-The MVP requires five player avatar states.
+Each avatar requires five frazzled states:
 
 ```text
 frazzled_level 0 -> Normal
@@ -35,7 +40,7 @@ frazzled_level 3 -> Very frazzled
 frazzled_level 4 -> Extremely frazzled
 ```
 
-Required files:
+The female avatar uses the existing default filenames:
 
 ```text
 player_frazzled_0.png
@@ -45,9 +50,45 @@ player_frazzled_3.png
 player_frazzled_4.png
 ```
 
-The player should remain clearly recognizable as the same character across all five images.
+The male avatar uses:
 
-The visual progression should communicate increasing stress and exhaustion while preserving the same overall character design.
+```text
+player_frazzled_m_0.png
+player_frazzled_m_1.png
+player_frazzled_m_2.png
+player_frazzled_m_3.png
+player_frazzled_m_4.png
+```
+
+The correct player image is determined by the selected avatar.
+
+```text
+Female -> player_frazzled_<frazzled_level>.png
+Male   -> player_frazzled_m_<frazzled_level>.png
+```
+
+Examples:
+
+```text
+Female at frazzled level 2 -> player_frazzled_2.png
+Male at frazzled level 4   -> player_frazzled_m_4.png
+```
+
+The female avatar is the default avatar and retains the original player filenames for backward compatibility.
+
+Each avatar should remain clearly recognizable as the same character across all five images.
+
+The female and male avatars should use a consistent:
+
+* Art style
+* Scale
+* Framing
+* Chef uniform
+* Frazzled progression
+
+Increasing frazzled levels should communicate greater stress, exhaustion, panic, and disorganization.
+
+All player-avatar images must be PNG files with transparent backgrounds.
 
 ---
 
@@ -89,11 +130,9 @@ The progression should feel gradual rather than making each horror level appear 
 
 ## Customer Assets
 
-Customers appear and place sushi orders.
+Customers appear individually and place sushi orders.
 
-The MVP should begin with at least five customer sprites.
-
-Required files:
+Version `1.1.0` requires ten customer sprites:
 
 ```text
 customer_01.png
@@ -101,11 +140,31 @@ customer_02.png
 customer_03.png
 customer_04.png
 customer_05.png
+customer_06.png
+customer_07.png
+customer_08.png
+customer_09.png
+customer_10.png
 ```
 
-Customers can be randomly selected for each order.
+A customer is randomly selected whenever a new order begins.
 
-For the MVP, customer appearance does not need to affect the requested sushi or game difficulty.
+When practical, the game should avoid displaying the same customer twice in succession.
+
+Customer selection does not affect:
+
+* The requested sushi
+* Required ingredients
+* Recipe validation
+* Game difficulty
+
+All customer images should:
+
+* Use a consistent cartoon art style
+* Use similar scale and framing
+* Show the complete character
+* Use transparent backgrounds
+* Remain visually distinct from one another
 
 Future versions may include:
 
@@ -234,21 +293,46 @@ Ingredient images should be clear and easy to distinguish because they will func
 
 ## UI Assets
 
-The MVP interface should include:
+Version `1.1.0` requires a start screen and the existing gameplay interface.
+
+### Start Screen
+
+The start screen should include:
+
+* Game title
+* Female-avatar selection
+* Male-avatar selection
+* Easy-mode selection
+* Hard-mode selection
+* Start Game button
+
+The player must select one avatar and one game mode before beginning the game.
+
+The selected avatar and game mode remain fixed for the entire game session.
+
+Starting a new game returns the player to the start screen and allows the player to make new selections.
+
+Easy and Hard modes do not require separate sushi or ingredient artwork. Both modes use the same recipe IDs, sushi images, ingredient images, and validation rules. Only the sushi name displayed in the customer order changes.
+
+### Gameplay Interface
+
+The gameplay interface should include:
 
 * Submit Order button
 * Clear Ingredients button
-* Current customer/order display
+* Current customer display
+* Current order display
 * Failure counter
 * Successful customers served counter
 * Ingredient selection area
 * Player avatar display
 * Customer sprite display
-* Current sushi/order display
+* Current sushi image
+* New Game or Back to Start option
 
 These interface elements should initially be implemented using the native UI components of the chosen application framework unless a custom image asset is specifically required.
 
-The game should be designed so the visual assets can be reused across web and mobile implementations where practical.
+The game should be designed so visual assets can be reused across web and mobile implementations where practical.
 
 ---
 
@@ -269,14 +353,24 @@ assets/
 │   ├── player_frazzled_1.png
 │   ├── player_frazzled_2.png
 │   ├── player_frazzled_3.png
-│   └── player_frazzled_4.png
+│   ├── player_frazzled_4.png
+│   ├── player_frazzled_m_0.png
+│   ├── player_frazzled_m_1.png
+│   ├── player_frazzled_m_2.png
+│   ├── player_frazzled_m_3.png
+│   └── player_frazzled_m_4.png
 │
 ├── customers/
 │   ├── customer_01.png
 │   ├── customer_02.png
 │   ├── customer_03.png
 │   ├── customer_04.png
-│   └── customer_05.png
+│   ├── customer_05.png
+│   ├── customer_06.png
+│   ├── customer_07.png
+│   ├── customer_08.png
+│   ├── customer_09.png
+│   └── customer_10.png
 │
 ├── sushi/
 │   ├── california_roll.png
@@ -317,18 +411,21 @@ assets/
 
 ---
 
-## MVP Art Requirements
+## Version 1.1.0 Art Requirements
 
-The MVP requires:
+Version `1.1.0` requires:
 
-* 5 player avatar states
-* 6 background states
-* 5 customer sprites
+* 10 player-avatar images: 5 female and 5 male
+* 6 background images
+* 10 customer sprites
 * 20 sushi images
 * 12 ingredient images
 
-Placeholder art may be used during early development, but filenames and IDs should remain consistent with this document.
+All player-avatar, customer, sushi, and ingredient images should use transparent PNG backgrounds.
 
+Background images should not use transparency.
+
+Placeholder art may be used during development, but filenames and IDs should remain consistent with this document.
 ---
 
 ## Asset Consistency Rules
@@ -337,9 +434,17 @@ To keep artwork, game data, and code aligned:
 
 * Sushi filenames must match sushi recipe IDs.
 * Ingredient filenames must match ingredient IDs using the `ingredient_` prefix.
-* Player avatar filenames must correspond to `frazzled_level`.
+* The selected player image must correspond to both `selected_avatar` and `frazzled_level`.
+* Female player-avatar filenames must use the original `player_frazzled_` prefix.
+* Male player-avatar filenames must use the `player_frazzled_m_` prefix.
+* The female avatar is the default player avatar.
 * Background filenames must correspond to `horror_level`.
-* Existing IDs should not be renamed without also updating the game data and any code references.
+* Customer filenames must use two-digit numbering from `customer_01.png` through `customer_10.png`.
+* Player-avatar images must use transparent backgrounds.
+* Customer images must use transparent backgrounds.
+* Sushi images must use transparent backgrounds.
+* Ingredient images must use transparent backgrounds.
+* Existing IDs and filenames should not be renamed without also updating the game data and code references.
 
 ---
 
