@@ -1,12 +1,13 @@
-import { useEffect, useReducer, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Image, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { backgrounds, customers, ingredientImages, playerAvatars, sushiImages } from '../assets/registry';
-import { avatarLevel, createGameState, finishReactionAction, gameReducer, ingredientIds, randomCustomer, randomOrder, restartAction } from '../game/game';
+import { avatarLevel, finishReactionAction, ingredientIds, recipeDisplayName, restartAction, type GameAction, type GameState } from '../game/game';
 import { recipes } from '../game/recipes';
 
-export function GameScreen() {
-  const [state, dispatch] = useReducer(gameReducer, undefined, () => createGameState(randomOrder(recipes), randomCustomer()));
+type Props = { state: GameState; dispatch: (action: GameAction) => void; onBackToStart: () => void };
+
+export function GameScreen({ state, dispatch, onBackToStart }: Props) {
   const scrollView = useRef<ScrollView>(null);
 
   const inputDisabled = state.game_over || state.reaction !== null;
@@ -22,7 +23,7 @@ export function GameScreen() {
       if (action) dispatch(action);
     }, 1800);
     return () => clearTimeout(timeout);
-  }, [state]);
+  }, [state, dispatch]);
 
   return (
     <View style={styles.background}>
@@ -36,6 +37,10 @@ export function GameScreen() {
           <View style={styles.heading}>
             <Text style={styles.eyebrow}>WELCOME TO YOUR SHIFT</Text>
             <Text style={styles.title}>Sushi after hours</Text>
+            <Pressable accessibilityRole="button" onPress={onBackToStart}
+              style={({ pressed }) => [styles.back, pressed && styles.pressed]}>
+              <Text style={styles.submitText}>Back to Start</Text>
+            </Pressable>
           </View>
           <View style={styles.counters}>
             <Text style={styles.caption}>Customers served: {state.successful_customers_served}</Text>
@@ -43,7 +48,7 @@ export function GameScreen() {
           </View>
           <View style={styles.scene}>
             <View style={styles.portrait}>
-              <Image source={playerAvatars[avatarLevel(state) as keyof typeof playerAvatars]} style={styles.character} resizeMode="contain" accessibilityLabel="Your sushi chef" />
+              <Image source={playerAvatars[state.selected_avatar][avatarLevel(state) as keyof typeof playerAvatars.female]} style={styles.character} resizeMode="contain" accessibilityLabel="Your sushi chef" />
               <Text style={styles.caption}>Chef</Text>
             </View>
             <View style={styles.portrait}>
@@ -64,7 +69,7 @@ export function GameScreen() {
               <Image source={sushiImages[state.order.id as keyof typeof sushiImages]} style={styles.sushi} resizeMode="contain" />
               <View style={styles.orderText}>
                 <Text style={styles.label}>ONE ORDER OF</Text>
-                <Text style={styles.orderName}>{state.order.name}</Text>
+                <Text style={styles.orderName}>{recipeDisplayName(state.order, state.game_mode)}</Text>
               </View>
             </View>
             <Text style={styles.instructions}>Tap ingredients to add or remove them, then serve your order.</Text>
@@ -111,6 +116,10 @@ export function GameScreen() {
                 style={({ pressed }) => [styles.restart, pressed && styles.pressed]}>
                 <Text style={styles.submitText}>Restart</Text>
               </Pressable>
+              <Pressable accessibilityRole="button" onPress={onBackToStart}
+                style={({ pressed }) => [styles.back, pressed && styles.pressed]}>
+                <Text style={styles.submitText}>Back to Start</Text>
+              </Pressable>
             </View>
           </View>
         )}
@@ -120,6 +129,7 @@ export function GameScreen() {
 }
 
 const styles = StyleSheet.create({
+  back: { minHeight: 48, paddingHorizontal: 16, marginTop: 12, borderRadius: 14, backgroundColor: '#554347', alignItems: 'center', justifyContent: 'center' },
   backgroundImage: { position: 'absolute', width: '100%', height: '100%' },
   reaction: { position: 'absolute', top: 8, left: -12, right: -12, backgroundColor: 'rgba(20, 14, 18, 0.92)', borderRadius: 12, padding: 10 },
   reactionText: { fontSize: 22, fontWeight: '900', textAlign: 'center' },
